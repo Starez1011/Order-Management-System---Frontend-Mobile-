@@ -1,10 +1,15 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8000/api'; // Android emulator localhost
-
+  static String get baseUrl {
+    if (kIsWeb) {
+      return 'http://127.0.0.1:8000/api'; // Web localhost
+    }
+    return 'http://10.0.2.2:8000/api'; // Android emulator localhost
+  }
   static Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
@@ -15,26 +20,41 @@ class ApiService {
   }
 
   // --- Auth ---
-  static Future<Map<String, dynamic>> sendOtp(String phone) async {
+  static Future<Map<String, dynamic>> checkPhone(String phone) async {
     final res = await http.post(
-      Uri.parse('$baseUrl/accounts/register/'), // or send-otp based on flow
+      Uri.parse('$baseUrl/accounts/check-phone/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'phone_number': phone}),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> finalizeRegistration(String phone, String password, String firstName, String lastName) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/accounts/register-finalize/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'phone_number': phone,
-        'password': 'tempPassword123!', // Simplified for demo
-        'first_name': 'Guest',
-        'last_name': 'User',
+        'password': password,
+        'first_name': firstName,
+        'last_name': lastName,
       }),
     );
-    // If already exists, maybe just throw or handle login flow instead
-    if (res.statusCode == 400 && res.body.contains('already registered')) {
-        final loginRes = await http.post(
-          Uri.parse('$baseUrl/accounts/send-otp/'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'phone_number': phone}),
-        );
-        return jsonDecode(loginRes.body);
+    final data = jsonDecode(res.body);
+    if (data['success'] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access_token', data['data']['access']);
+      await prefs.setString('refresh_token', data['data']['refresh']);
     }
+    return data;
+  }
+
+  static Future<Map<String, dynamic>> sendOtp(String phone) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/accounts/send-otp/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'phone_number': phone}),
+    );
     return jsonDecode(res.body);
   }
 
@@ -78,7 +98,15 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
-  // --- Menu ---
+  // --- Menu & Location ---
+  static Future<Map<String, dynamic>> getCafeDetails() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/tables/location/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
   static Future<Map<String, dynamic>> getMenu() async {
     final res = await http.get(Uri.parse('$baseUrl/menu/'));
     return jsonDecode(res.body);

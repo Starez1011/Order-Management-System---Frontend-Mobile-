@@ -4,8 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/password_login_screen.dart';
+import 'screens/otp_verification_screen.dart';
+import 'screens/setup_profile_screen.dart';
 import 'screens/qr_scanner_screen.dart';
 import 'screens/menu_screen.dart';
+import 'screens/main_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +46,7 @@ class AppState extends ChangeNotifier {
 class CafeApp extends StatelessWidget {
   final bool hasToken;
 
-  const CafeApp({Key? key, required this.hasToken}) : super(key: key);
+  const CafeApp({super.key, required this.hasToken});
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +74,14 @@ class CafeApp extends StatelessWidget {
           ),
         );
       },
-      initialRoute: hasToken ? '/qr_scanner' : '/login',
+      initialRoute: hasToken ? '/dashboard' : '/login',
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
+        '/password_login': (context) => const PasswordLoginScreen(),
+        '/otp_verification': (context) => const OtpVerificationScreen(),
+        '/setup_profile': (context) => const SetupProfileScreen(),
+        '/dashboard': (context) => const MainScreen(),
         '/qr_scanner': (context) => const QrScannerScreen(),
         '/menu': (context) => const MenuScreen(),
       },

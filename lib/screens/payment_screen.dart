@@ -3,7 +3,7 @@ import '../services/api_service.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String orderNumber;
-  const PaymentScreen({Key? key, required this.orderNumber}) : super(key: key);
+  const PaymentScreen({super.key, required this.orderNumber});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
