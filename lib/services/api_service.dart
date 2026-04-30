@@ -2,13 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ApiService {
   static String get baseUrl {
-    if (kIsWeb) {
-      return 'http://127.0.0.1:8000/api'; // Web localhost
+    // if (kIsWeb) {
+    //   return 'http://127.0.0.1:8000/api'; // Web localhost
+    // }
+    // return 'http://10.0.2.2:8000/api'; // Android emulator localhost
+    final url = dotenv.env['BASE_URL'];
+
+    if (url == null || url.isEmpty) {
+      throw Exception('BASE_URL not set in .env');
     }
-    return 'http://10.0.2.2:8000/api'; // Android emulator localhost
+
+    return url;
   }
   static Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
