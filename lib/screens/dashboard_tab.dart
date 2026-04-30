@@ -297,9 +297,9 @@ class _DashboardTabState extends State<DashboardTab> {
                                         topLeft: Radius.circular(24),
                                         topRight: Radius.circular(24),
                                       ),
-                                      child: item['image'] != null
+                                      child: item['image_url'] != null
                                           ? Image.network(
-                                              item['image'],
+                                              item['image_url'],
                                               fit: BoxFit.cover,
                                               errorBuilder: (ctx, err, stack) => _buildPlaceholder(),
                                             )

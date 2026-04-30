@@ -87,53 +87,55 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Verify Phone')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.message, size: 80, color: Colors.indigo),
-            const SizedBox(height: 16),
-            Text(
-              'We sent an OTP to\n$phone',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 32),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'OTP Code',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.security),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.message, size: 80, color: Colors.indigo),
+              const SizedBox(height: 16),
+              Text(
+                'We sent an OTP to\n$phone',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
-              keyboardType: TextInputType.number,
-              onChanged: (v) => otp = v,
-              onSubmitted: (_) => handleVerify(phone),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: isLoading ? null : () => handleVerify(phone),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                textStyle: const TextStyle(fontSize: 18),
+              const SizedBox(height: 32),
+              TextField(
+                decoration: const InputDecoration(
+                  labelText: 'OTP Code',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.security),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (v) => otp = v,
+                onSubmitted: (_) => handleVerify(phone),
               ),
-              child: isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Verify OTP'),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: (countdown > 0 || isLoading) ? null : () => handleResendOtp(phone),
-              child: Text(
-                countdown > 0 ? 'Resend OTP in ${countdown}s' : 'Resend OTP',
-                style: TextStyle(
-                  color: countdown > 0 ? Colors.grey : Colors.indigo,
-                  fontWeight: FontWeight.bold,
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: isLoading ? null : () => handleVerify(phone),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Verify OTP'),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: (countdown > 0 || isLoading) ? null : () => handleResendOtp(phone),
+                child: Text(
+                  countdown > 0 ? 'Resend OTP in ${countdown}s' : 'Resend OTP',
+                  style: TextStyle(
+                    color: countdown > 0 ? Colors.grey : Colors.indigo,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

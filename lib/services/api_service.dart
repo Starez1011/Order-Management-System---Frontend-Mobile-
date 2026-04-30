@@ -22,6 +22,7 @@ class ApiService {
     final token = prefs.getString('access_token');
     return {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
       if (token != null) 'Authorization': 'Bearer $token',
     };
   }
@@ -30,7 +31,7 @@ class ApiService {
   static Future<Map<String, dynamic>> checkPhone(String phone) async {
     final res = await http.post(
       Uri.parse('$baseUrl/accounts/check-phone/'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: jsonEncode({'phone_number': phone}),
     );
     return jsonDecode(res.body);
@@ -39,7 +40,7 @@ class ApiService {
   static Future<Map<String, dynamic>> finalizeRegistration(String phone, String password, String firstName, String lastName) async {
     final res = await http.post(
       Uri.parse('$baseUrl/accounts/register-finalize/'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: jsonEncode({
         'phone_number': phone,
         'password': password,
@@ -59,7 +60,7 @@ class ApiService {
   static Future<Map<String, dynamic>> sendOtp(String phone) async {
     final res = await http.post(
       Uri.parse('$baseUrl/accounts/send-otp/'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: jsonEncode({'phone_number': phone}),
     );
     return jsonDecode(res.body);
@@ -68,7 +69,7 @@ class ApiService {
   static Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
     final res = await http.post(
       Uri.parse('$baseUrl/accounts/verify-otp/'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true'},
       body: jsonEncode({'phone_number': phone, 'otp': otp}),
     );
     final data = jsonDecode(res.body);
@@ -115,7 +116,10 @@ class ApiService {
   }
 
   static Future<Map<String, dynamic>> getMenu() async {
-    final res = await http.get(Uri.parse('$baseUrl/menu/'));
+    final res = await http.get(
+      Uri.parse('$baseUrl/menu/'),
+      headers: await _getHeaders(),
+    );
     return jsonDecode(res.body);
   }
 
