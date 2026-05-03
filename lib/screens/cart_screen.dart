@@ -57,6 +57,23 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+  Future<void> _updateQuantity(int itemId, int delta) async {
+    final state = Provider.of<AppState>(context, listen: false);
+    setState(() => isLoading = true);
+    try {
+      final res = await ApiService.addToCart(state.currentQrToken!, itemId, delta);
+      if (res['success'] == true) {
+        await _fetchCart();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));
+        setState(() => isLoading = false);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error updating cart')));
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -74,8 +91,23 @@ class _CartScreenState extends State<CartScreen> {
                       final item = items[i];
                       return ListTile(
                         title: Text(item['name']),
-                        subtitle: Text('Qty: ${item['quantity']} × Rs ${item['price']}'),
-                        trailing: Text('Rs ${item['line_total']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        subtitle: Text('Rs ${item['price']}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline, color: Colors.indigo),
+                              onPressed: () => _updateQuantity(item['item_id'] ?? item['id'], -1),
+                            ),
+                            Text('${item['quantity']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            IconButton(
+                              icon: const Icon(Icons.add_circle_outline, color: Colors.indigo),
+                              onPressed: () => _updateQuantity(item['item_id'] ?? item['id'], 1),
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Rs ${item['line_total']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          ],
+                        ),
                       );
                     },
                   ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:local_auth/local_auth.dart';
 import '../services/api_service.dart';
+import 'send_points_screen.dart';
+import 'my_qr_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -13,10 +16,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Map<String, dynamic>? profile;
   bool isLoading = true;
 
+  bool useBiometrics = false;
+  final LocalAuthentication auth = LocalAuthentication();
+
   @override
   void initState() {
     super.initState();
     _fetchProfile();
+    _loadBiometricSettings();
+  }
+
+  Future<void> _loadBiometricSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      useBiometrics = prefs.getBool('use_biometric_transfer') ?? false;
+    });
+  }
+
+  Future<void> _toggleBiometrics(bool value) async {
+    if (value) {
+      bool canCheck = await auth.canCheckBiometrics;
+      if (!canCheck) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Biometrics not available on this device.')));
+        return;
+      }
+      bool authenticated = await auth.authenticate(
+        localizedReason: 'Authenticate to enable biometric transfers',
+      );
+      if (authenticated) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('use_biometric_transfer', true);
+        setState(() => useBiometrics = true);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Biometrics enabled!')));
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('use_biometric_transfer', false);
+      setState(() => useBiometrics = false);
+    }
+  }
+
+  Future<void> _changeLoginPassword() async {
+    final controller = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Change Login Password'),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: const InputDecoration(hintText: 'New Password (min 6 chars)'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (controller.text.length < 6) return;
+              final res = await ApiService.updateLoginPassword(controller.text);
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'] ?? 'Password changed')));
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      )
+    );
+  }
+
+  Future<void> _setTransactionPassword() async {
+    final controller = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Set Transaction PIN'),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(hintText: 'New PIN (min 4 digits)'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () async {
+              if (controller.text.length < 4) return;
+              final res = await ApiService.setTransactionPassword(controller.text);
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'] ?? 'PIN updated')));
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      )
+    );
   }
 
   Future<void> _fetchProfile() async {
@@ -42,7 +134,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('My Profile')),
-      body: Padding(
+      body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
@@ -71,7 +164,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             
-            const Spacer(),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: profile == null ? null : () => Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (_) => MyQrScreen(phoneNumber: profile!['phone_number'], name: profile!['first_name']))
+                    ),
+                    icon: const Icon(Icons.qr_code),
+                    label: const Text('My QR'),
+                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SendPointsScreen())),
+                    icon: const Icon(Icons.send),
+                    label: const Text('Send Points'),
+                    style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 32),
+            const Align(alignment: Alignment.centerLeft, child: Text('Security Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(Icons.lock_outline),
+              title: const Text('Change Login Password'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _changeLoginPassword,
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.pin_outlined),
+              title: const Text('Set Transaction PIN'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _setTransactionPassword,
+            ),
+            const Divider(),
+            SwitchListTile(
+              secondary: const Icon(Icons.fingerprint),
+              title: const Text('Use Biometrics for Transfers'),
+              subtitle: const Text('Send points without typing PIN'),
+              value: useBiometrics,
+              onChanged: _toggleBiometrics,
+            ),
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -85,7 +228,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 24)
           ],
         ),
       ),

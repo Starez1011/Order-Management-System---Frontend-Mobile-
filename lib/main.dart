@@ -10,6 +10,7 @@ import 'screens/setup_profile_screen.dart';
 import 'screens/qr_scanner_screen.dart';
 import 'screens/menu_screen.dart';
 import 'screens/main_screen.dart';
+import 'screens/notifications_screen.dart';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -89,6 +90,7 @@ class CafeApp extends StatelessWidget {
         '/dashboard': (context) => const MainScreen(),
         '/qr_scanner': (context) => const QrScannerScreen(),
         '/menu': (context) => const MenuScreen(),
+        '/notifications': (context) => NotificationsScreen(),
       },
     );
   }

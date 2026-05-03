@@ -150,7 +150,39 @@ class ApiService {
     return jsonDecode(res.body);
   }
 
+  static Future<Map<String, dynamic>> updateLoginPassword(String newPassword) async {
+    final res = await http.patch(
+      Uri.parse('$baseUrl/accounts/profile/'),
+      headers: await _getHeaders(),
+      body: jsonEncode({'new_password': newPassword}),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> setTransactionPassword(String password) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/accounts/transaction-password/'),
+      headers: await _getHeaders(),
+      body: jsonEncode({'transaction_password': password}),
+    );
+    return jsonDecode(res.body);
+  }
+
   // --- Payments / Loyalty ---
+  static Future<Map<String, dynamic>> transferPoints(String phoneNumber, double points, {String transactionPassword = '', bool biometricVerified = false}) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/accounts/transfer-points/'),
+      headers: await _getHeaders(),
+      body: jsonEncode({
+        'phone_number': phoneNumber,
+        'points': points,
+        if (!biometricVerified) 'transaction_password': transactionPassword,
+        if (biometricVerified) 'biometric_verified': true,
+      }),
+    );
+    return jsonDecode(res.body);
+  }
+
   static Future<Map<String, dynamic>> previewPayment(String orderNumber, double pointsToUse) async {
     final res = await http.post(
       Uri.parse('$baseUrl/payments/preview/'),
@@ -170,6 +202,52 @@ class ApiService {
       Uri.parse('$baseUrl/payments/pay-via-qr/'),
       headers: await _getHeaders(),
       body: jsonEncode({'qr_token': qrToken}),
+    );
+    return jsonDecode(res.body);
+  }
+
+  // --- Notifications ---
+  static Future<Map<String, dynamic>> getNotifications() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/accounts/notifications/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> markNotificationsRead() async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/accounts/notifications/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  // --- Order Status ---
+  static Future<Map<String, dynamic>> getMyActiveOrders() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/orders/my-active/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> cancelOrder(String orderNumber) async {
+    final res = await http.post(
+      Uri.parse('$baseUrl/orders/cancel/$orderNumber/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> getMyOrderHistory({int? days}) async {
+    String url = '$baseUrl/orders/history/';
+    if (days != null) {
+      url += '?days=$days';
+    }
+    final res = await http.get(
+      Uri.parse(url),
+      headers: await _getHeaders(),
     );
     return jsonDecode(res.body);
   }

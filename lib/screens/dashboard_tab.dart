@@ -12,6 +12,7 @@ class _DashboardTabState extends State<DashboardTab> {
   bool isLoading = true;
   Map<String, dynamic>? cafeDetails;
   List<dynamic> categories = [];
+  int unreadNotificationsCount = 0;
 
   @override
   void initState() {
@@ -24,10 +25,12 @@ class _DashboardTabState extends State<DashboardTab> {
       final futures = await Future.wait([
         ApiService.getCafeDetails(),
         ApiService.getMenu(),
+        ApiService.getNotifications(),
       ]);
 
       final cafeRes = futures[0];
       final menuRes = futures[1];
+      final notifRes = futures[2];
 
       if (mounted) {
         setState(() {
@@ -36,6 +39,10 @@ class _DashboardTabState extends State<DashboardTab> {
           }
           if (menuRes['success'] == true) {
             categories = menuRes['data'];
+          }
+          if (notifRes['success'] == true) {
+            final notifs = notifRes['data'] as List<dynamic>;
+            unreadNotificationsCount = notifs.where((n) => n['is_read'] == false).length;
           }
           isLoading = false;
         });
@@ -87,14 +94,46 @@ class _DashboardTabState extends State<DashboardTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Welcome to',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.2,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Welcome to',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.8),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.notifications_rounded, color: Colors.white),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/notifications').then((_) => _fetchData());
+                            },
+                          ),
+                          if (unreadNotificationsCount > 0)
+                            Positioned(
+                              right: 8,
+                              top: 8,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.redAccent,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  unreadNotificationsCount.toString(),
+                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(

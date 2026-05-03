@@ -21,6 +21,23 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Location Services Disabled'),
+          content: const Text('Please enable location services (GPS) to verify your table.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Geolocator.openLocationSettings();
+              },
+              child: const Text('Open Settings'),
+            )
+          ],
+        )
+      );
       return null;
     }
 
@@ -33,10 +50,27 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     }
     
     if (permission == LocationPermission.deniedForever) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Location Permission Denied'),
+          content: const Text('We need location permission to verify you are at the cafe. Please enable it in App Settings.'),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Geolocator.openAppSettings();
+              },
+              child: const Text('Open Settings'),
+            )
+          ],
+        )
+      );
       return null;
     }
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
   }
 
   void _onDetect(BarcodeCapture capture) async {

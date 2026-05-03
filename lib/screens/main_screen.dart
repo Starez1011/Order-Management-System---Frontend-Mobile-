@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dashboard_tab.dart';
 import 'profile_screen.dart';
+import 'my_orders_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -14,6 +15,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _tabs = const [
     DashboardTab(),
+    MyOrdersScreen(),
     ProfileScreen(),
   ];
 
@@ -44,12 +46,18 @@ class _MainScreenState extends State<MainScreen> {
                 label: 'Dashboard',
                 index: 0,
               ),
+              _buildTabItem(
+                icon: Icons.receipt_long,
+                label: 'My Orders',
+                index: 1,
+              ),
               const SizedBox(width: 48), // Space for the floating action button
               _buildTabItem(
                 icon: Icons.person_rounded,
                 label: 'Profile',
-                index: 1,
+                index: 2,
               ),
+              const Expanded(child: SizedBox.shrink()), // Empty slot to maintain symmetry
             ],
           ),
         ),
