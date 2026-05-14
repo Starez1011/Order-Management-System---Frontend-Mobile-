@@ -400,7 +400,7 @@ class _DashboardTabState extends State<DashboardTab> {
   // ─── Offers row ────────────────────────────────────────────────────────────
   Widget _buildOffersRow() {
     return SizedBox(
-      height: 160,
+      height: 180,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -503,51 +503,86 @@ class _OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imgUrl = offer['image_url'] as String?;
     return Container(
-      width: 200,
+      width: 260,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 12, offset: const Offset(0, 4))],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(color: kPrimary, borderRadius: BorderRadius.circular(20)),
-            child: Text(
-              offer['discount_text'] ?? '',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background Image or Solid Color
+            if (imgUrl != null && imgUrl.isNotEmpty)
+              Image.network(
+                ApiService.getImageUrl(imgUrl),
+                headers: const {'ngrok-skip-browser-warning': 'true'},
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1F2937)),
+              )
+            else
+              Container(color: const Color(0xFF1F2937)),
+
+            // Gradient Overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black.withOpacity(0.8), Colors.black.withOpacity(0.1)],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            offer['title'] ?? '',
-            style: const TextStyle(color: kText, fontWeight: FontWeight.bold, fontSize: 15),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          if (offer['description'] != null && offer['description'].toString().isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              offer['description'],
-              style: const TextStyle(color: kTextMuted, fontSize: 12, height: 1.3),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+
+            // Content
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(color: kPrimary, borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      offer['discount_text'] ?? '',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    offer['title'] ?? '',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, shadows: [Shadow(blurRadius: 4, color: Colors.black45)]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (offer['description'] != null && offer['description'].toString().isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      offer['description'],
+                      style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (offer['valid_until'] != null) ...[
+                    const SizedBox(height: 6),
+                    Row(children: [
+                      Icon(Icons.timer_rounded, size: 13, color: Colors.white.withOpacity(0.7)),
+                      const SizedBox(width: 4),
+                      Text('Until ${offer['valid_until']}', style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11)),
+                    ]),
+                  ],
+                ],
+              ),
             ),
           ],
-          if (offer['valid_until'] != null) ...[
-            const Spacer(),
-            Row(children: [
-              const Icon(Icons.timer_rounded, size: 13, color: kTextMuted),
-              const SizedBox(width: 4),
-              Text('Until ${offer['valid_until']}', style: const TextStyle(color: kTextMuted, fontSize: 11)),
-            ]),
-          ],
-        ],
+        ),
       ),
     );
   }
