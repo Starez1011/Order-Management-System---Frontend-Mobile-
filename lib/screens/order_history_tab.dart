@@ -83,7 +83,7 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                   }
                 },
                 underline: const SizedBox(),
-                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.indigo),
+                icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF059669)),
               ),
             ],
           ),
@@ -127,10 +127,10 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                     Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.indigo.shade50,
+                                        color: Color(0xFFF0FDF4),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(Icons.receipt, color: Colors.indigo),
+                                      child: const Icon(Icons.receipt, color: Color(0xFF059669)),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
@@ -140,13 +140,21 @@ class _OrderHistoryTabState extends State<OrderHistoryTab> {
                                           Text(order['order_number'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                           const SizedBox(height: 4),
                                           Text(formattedDate, style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                                          if (order['branch_name'] != null && order['branch_name'] != 'Unknown') ...[
+                                            const SizedBox(height: 2),
+                                            Text(order['branch_name'], style: TextStyle(color: Colors.grey.shade600, fontSize: 12, fontWeight: FontWeight.w500)),
+                                          ],
+                                          if (order['payment_method'] != null) ...[
+                                            const SizedBox(height: 2),
+                                            Text(order['payment_method'], style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                                          ],
                                         ],
                                       ),
                                     ),
                                     Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        Text('Rs ${order['total_amount']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.indigo)),
+                                        Text('Rs ${order['total_amount']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF059669))),
                                         const SizedBox(height: 4),
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

@@ -55,7 +55,7 @@ class _SetupProfileScreenState extends State<SetupProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.person_add, size: 80, color: Colors.indigo),
+              const Icon(Icons.person_add, size: 80, color: Color(0xFF059669)),
               const SizedBox(height: 16),
               const Text(
                 'Just one more step!',

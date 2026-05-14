@@ -96,12 +96,12 @@ class _CartScreenState extends State<CartScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, color: Colors.indigo),
+                              icon: const Icon(Icons.remove_circle_outline, color: Color(0xFF059669)),
                               onPressed: () => _updateQuantity(item['item_id'] ?? item['id'], -1),
                             ),
                             Text('${item['quantity']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                             IconButton(
-                              icon: const Icon(Icons.add_circle_outline, color: Colors.indigo),
+                              icon: const Icon(Icons.add_circle_outline, color: Color(0xFF059669)),
                               onPressed: () => _updateQuantity(item['item_id'] ?? item['id'], 1),
                             ),
                             const SizedBox(width: 8),
@@ -127,7 +127,7 @@ class _CartScreenState extends State<CartScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text('Total Amount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            Text('Rs $total', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                            Text('Rs $total', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF059669))),
                           ],
                         ),
                         const SizedBox(height: 16),

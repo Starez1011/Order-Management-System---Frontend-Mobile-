@@ -24,9 +24,14 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Future<void> _fetchMenu() async {
     try {
-      final res = await ApiService.getMenu();
-      if (res['success'] == true) {
-        setState(() => categories = res['data']);
+      final state = Provider.of<AppState>(context, listen: false);
+      if (state.currentBranchId != null) {
+        final res = await ApiService.getMenu(state.currentBranchId!);
+        if (res['success'] == true) {
+          setState(() => categories = res['data']);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Branch information missing')));
       }
       _fetchCartCount();
     } catch (e) {
@@ -155,9 +160,9 @@ class _MenuScreenState extends State<MenuScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                color: Colors.indigo.shade50,
+                color: Color(0xFFF0FDF4),
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Text(category['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                child: Text(category['name'], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF059669))),
               ),
               ...items.map<Widget>((item) => ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

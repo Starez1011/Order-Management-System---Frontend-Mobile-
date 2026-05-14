@@ -47,7 +47,7 @@ class MyQrScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 phoneNumber,
-                style: const TextStyle(fontSize: 18, color: Colors.indigo, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, color: Color(0xFF059669), fontWeight: FontWeight.bold),
               ),
             ],
           ),

@@ -94,7 +94,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.message, size: 80, color: Colors.indigo),
+              const Icon(Icons.message, size: 80, color: Color(0xFF059669)),
               const SizedBox(height: 16),
               Text(
                 'We sent an OTP to\n$phone',
@@ -129,7 +129,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 child: Text(
                   countdown > 0 ? 'Resend OTP in ${countdown}s' : 'Resend OTP',
                   style: TextStyle(
-                    color: countdown > 0 ? Colors.grey : Colors.indigo,
+                    color: countdown > 0 ? Colors.grey : Color(0xFF059669),
                     fontWeight: FontWeight.bold,
                   ),
                 ),

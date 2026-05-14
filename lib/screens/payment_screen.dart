@@ -75,9 +75,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.indigo.shade50,
+                color: Color(0xFFF0FDF4),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.indigo.shade200)
+                border: Border.all(color: Color(0xFFA7F3D0))
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,11 +86,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('💳 Loyalty Wallet', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('${p['available_points']} points', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                      Text('${p['available_points']} points', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF059669))),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text('1 point = Rs ${p['point_value']}', style: TextStyle(color: Colors.indigo.shade400, fontSize: 13)),
+                  Text('1 point = Rs ${p['point_value']}', style: TextStyle(color: Color(0xFF34D399), fontSize: 13)),
                   
                   const SizedBox(height: 16),
                   if (p['available_points'] > 0) ...[

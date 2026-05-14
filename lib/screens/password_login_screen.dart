@@ -46,7 +46,7 @@ class _PasswordLoginScreenState extends State<PasswordLoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Icon(Icons.lock, size: 80, color: Colors.indigo),
+              const Icon(Icons.lock, size: 80, color: Color(0xFF059669)),
               const SizedBox(height: 16),
               Text(
                 'Welcome back!\n$phone',

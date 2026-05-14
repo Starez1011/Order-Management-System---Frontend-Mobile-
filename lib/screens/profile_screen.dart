@@ -151,15 +151,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.indigo.shade50,
+                color: Color(0xFFF0FDF4),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.indigo.shade200)
+                border: Border.all(color: Color(0xFFA7F3D0))
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Loyalty Points:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('${profile?['loyalty_points'] ?? 0} pts', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                  Text('${profile?['loyalty_points'] ?? 0} pts', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF059669))),
                 ],
               ),
             ),

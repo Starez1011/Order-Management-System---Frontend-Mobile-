@@ -140,7 +140,8 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         final res = await ApiService.validateQr(qrRaw, pos.latitude, pos.longitude);
         if (res['success'] == true) {
           final tableNumber = res['data']['table_number'];
-          Provider.of<AppState>(context, listen: false).setTableSession(qrRaw, tableNumber);
+          final branchId = res['data']['branch_id'];
+          Provider.of<AppState>(context, listen: false).setTableSession(qrRaw, tableNumber, branchId);
           Navigator.pushReplacementNamed(context, '/menu');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(res['message'])));

@@ -114,6 +114,26 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 8),
+                  if (order['branch_name'] != null && order['branch_name'] != 'Unknown') ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.storefront, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(order['branch_name'], style: TextStyle(color: Colors.grey.shade700)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                  if (order['payment_method'] != null) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.payment, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Text(order['payment_method'], style: TextStyle(color: Colors.grey.shade700)),
+                      ],
+                    ),
+                  ],
                   const Divider(height: 24),
                   ...items.map((item) => Padding(
                     padding: const EdgeInsets.only(bottom: 4),
@@ -158,9 +178,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
         appBar: AppBar(
           title: const Text('My Orders'),
           bottom: const TabBar(
-            labelColor: Colors.indigo,
+            labelColor: Color(0xFF059669),
             unselectedLabelColor: Colors.grey,
-            indicatorColor: Colors.indigo,
+            indicatorColor: Color(0xFF059669),
             tabs: [
               Tab(text: 'Live Orders'),
               Tab(text: 'History'),

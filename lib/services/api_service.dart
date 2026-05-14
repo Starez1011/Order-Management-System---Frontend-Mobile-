@@ -17,6 +17,14 @@ class ApiService {
 
     return url;
   }
+
+  static String getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    if (path.startsWith('http')) return path;
+    final base = baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+    return '$base${path.startsWith('/') ? '' : '/'}$path';
+  }
+
   static Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token');
@@ -107,17 +115,25 @@ class ApiService {
   }
 
   // --- Menu & Location ---
-  static Future<Map<String, dynamic>> getCafeDetails() async {
+  static Future<Map<String, dynamic>> getBranches() async {
     final res = await http.get(
-      Uri.parse('$baseUrl/tables/location/'),
+      Uri.parse('$baseUrl/tables/branches/'),
       headers: await _getHeaders(),
     );
     return jsonDecode(res.body);
   }
 
-  static Future<Map<String, dynamic>> getMenu() async {
+  static Future<Map<String, dynamic>> getCafeDetails(int branchId) async {
     final res = await http.get(
-      Uri.parse('$baseUrl/menu/'),
+      Uri.parse('$baseUrl/tables/location/?branch_id=$branchId'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> getMenu(int branchId) async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/menu/?branch_id=$branchId'),
       headers: await _getHeaders(),
     );
     return jsonDecode(res.body);
@@ -247,6 +263,34 @@ class ApiService {
     }
     final res = await http.get(
       Uri.parse(url),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  // --- Promotions ---
+  static Future<Map<String, dynamic>> getBanners() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/admin-panel/banners/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> getOffers() async {
+    final res = await http.get(
+      Uri.parse('$baseUrl/admin-panel/offers/'),
+      headers: await _getHeaders(),
+    );
+    return jsonDecode(res.body);
+  }
+
+  static Future<Map<String, dynamic>> getPopularItems({int? branchId}) async {
+    final uri = branchId != null
+        ? '$baseUrl/admin-panel/popular/?branch_id=$branchId'
+        : '$baseUrl/admin-panel/popular/';
+    final res = await http.get(
+      Uri.parse(uri),
       headers: await _getHeaders(),
     );
     return jsonDecode(res.body);

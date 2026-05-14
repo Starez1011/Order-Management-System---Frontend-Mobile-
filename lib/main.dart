@@ -35,16 +35,27 @@ void main() async {
 class AppState extends ChangeNotifier {
   String? currentQrToken;
   String? currentTableNumber;
+  int? currentBranchId;
+  int? selectedBranchId;        // branch user is browsing (home tab)
+  String? selectedBranchName;   // display name for that branch
 
-  void setTableSession(String qr, String table) {
+  void setTableSession(String qr, String table, int? branchId) {
     currentQrToken = qr;
     currentTableNumber = table;
+    currentBranchId = branchId;
+    notifyListeners();
+  }
+
+  void setSelectedBranch(int id, String name) {
+    selectedBranchId = id;
+    selectedBranchName = name;
     notifyListeners();
   }
 
   void clearSession() {
     currentQrToken = null;
     currentTableNumber = null;
+    currentBranchId = null;
     notifyListeners();
   }
 }
@@ -59,14 +70,18 @@ class CafeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Café App',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Colors.grey[50],
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF059669),
+          primary: const Color(0xFF059669),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF0FDF4), // emerald-50
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.indigo,
+          backgroundColor: Color(0xFF064E3B), // emerald-950
           foregroundColor: Colors.white,
           elevation: 0,
         ),
       ),
+      themeMode: ThemeMode.light, // Force light mode always
       builder: (context, child) {
         return Center(
           child: Container(

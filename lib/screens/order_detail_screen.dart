@@ -61,11 +61,21 @@ class OrderDetailScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
+                    if (order['branch_name'] != null && order['branch_name'] != 'Unknown') ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Branch', style: TextStyle(color: Colors.grey)),
+                          Text(order['branch_name'], style: const TextStyle(fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Status', style: TextStyle(color: Colors.grey)),
-                        Text(_formatStatus(order['status']), style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                        Text(_formatStatus(order['status']), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF059669))),
                       ],
                     ),
                   ],
@@ -96,8 +106,8 @@ class OrderDetailScreen extends StatelessWidget {
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(color: Colors.indigo.shade50, borderRadius: BorderRadius.circular(8)),
-                              child: Text('${item['quantity']}x', style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold)),
+                              decoration: BoxDecoration(color: Color(0xFFF0FDF4), borderRadius: BorderRadius.circular(8)),
+                              child: Text('${item['quantity']}x', style: const TextStyle(color: Color(0xFF059669), fontWeight: FontWeight.bold)),
                             ),
                             const SizedBox(width: 12),
                             Text(item['name'], style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -129,6 +139,16 @@ class OrderDetailScreen extends StatelessWidget {
                         Text('Rs ${order['total_amount']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                       ],
                     ),
+                    if (order['payment_method'] != null) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Payment Method', style: TextStyle(color: Colors.grey)),
+                          Text(order['payment_method'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ],
                     const Divider(height: 24),
                     if (paidWithPoints) ...[
                       Row(

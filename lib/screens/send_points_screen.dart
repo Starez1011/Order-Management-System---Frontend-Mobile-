@@ -106,7 +106,7 @@ class _SendPointsScreenState extends State<SendPointsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.send_to_mobile, size: 64, color: Colors.indigo),
+            const Icon(Icons.send_to_mobile, size: 64, color: Color(0xFF059669)),
             const SizedBox(height: 24),
             
             OutlinedButton.icon(
