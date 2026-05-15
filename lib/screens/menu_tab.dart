@@ -375,9 +375,30 @@ class _MenuItemCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Rs ${item['price']}',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: kPrimary),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (item['discounted_price'] != null)
+                            Row(
+                              children: [
+                                Text(
+                                  'Rs ${item['price']}',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: kTextMuted, decoration: TextDecoration.lineThrough),
+                                ),
+                                if (item['discount_percentage'] != null)
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 6),
+                                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                    decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(4)),
+                                    child: Text('-${item['discount_percentage']}%', style: TextStyle(fontSize: 10, color: Colors.amber.shade900, fontWeight: FontWeight.w800)),
+                                  ),
+                              ],
+                            ),
+                          Text(
+                            'Rs ${item['discounted_price'] ?? item['price']}',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: kPrimary),
+                          ),
+                        ],
                       ),
                       GestureDetector(
                         onTap: onAddToCart,

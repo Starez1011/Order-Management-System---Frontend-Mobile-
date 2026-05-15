@@ -167,7 +167,18 @@ class _MenuScreenState extends State<MenuScreen> {
               ...items.map<Widget>((item) => ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Rs ${item['price']}\n${item['description']}'),
+                subtitle: item['discounted_price'] != null 
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Rs ${item['price']}', style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 12, color: Colors.grey)),
+                          const SizedBox(height: 2),
+                          Text('Rs ${item['discounted_price']} (-${item['discount_percentage']}%)', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          if (item['description'] != null && item['description'].toString().isNotEmpty)
+                            Text(item['description']),
+                        ],
+                      )
+                    : Text('Rs ${item['price']}\n${item['description']}'),
                 isThreeLine: true,
                 trailing: ElevatedButton(
                   onPressed: item['is_available'] ? () => _showQuantityDialog(item) : null,

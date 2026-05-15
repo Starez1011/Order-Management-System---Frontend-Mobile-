@@ -414,7 +414,7 @@ class _DashboardTabState extends State<DashboardTab> {
   // ─── Popular items row ─────────────────────────────────────────────────────
   Widget _buildPopularRow() {
     return SizedBox(
-      height: 210,
+      height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -607,7 +607,7 @@ class _PopularCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            flex: 3,
+            flex: 1,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(22), topRight: Radius.circular(22)),
               child: item['image_url'] != null && item['image_url'].toString().isNotEmpty
@@ -621,7 +621,7 @@ class _PopularCard extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -634,7 +634,28 @@ class _PopularCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text('Rs ${item['price']}', style: const TextStyle(color: kPrimary, fontWeight: FontWeight.w800, fontSize: 13)),
+                  if (item['discounted_price'] != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text('Rs ${item['price']}', style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 11, color: kTextMuted)),
+                            if (item['discount_percentage'] != null)
+                              Container(
+                                margin: const EdgeInsets.only(left: 6),
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                decoration: BoxDecoration(color: Colors.amber.shade100, borderRadius: BorderRadius.circular(4)),
+                                child: Text('-${item['discount_percentage']}%', style: TextStyle(fontSize: 9, color: Colors.amber.shade900, fontWeight: FontWeight.w800)),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text('Rs ${item['discounted_price']}', style: const TextStyle(color: kPrimary, fontWeight: FontWeight.w800, fontSize: 13)),
+                      ],
+                    )
+                  else
+                    Text('Rs ${item['price']}', style: const TextStyle(color: kPrimary, fontWeight: FontWeight.w800, fontSize: 13)),
                 ],
               ),
             ),

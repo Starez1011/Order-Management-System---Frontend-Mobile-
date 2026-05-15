@@ -91,7 +91,16 @@ class _CartScreenState extends State<CartScreen> {
                       final item = items[i];
                       return ListTile(
                         title: Text(item['name']),
-                        subtitle: Text('Rs ${item['price']}'),
+                        subtitle: item['discounted_price'] != null
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Rs ${item['price']}', style: const TextStyle(decoration: TextDecoration.lineThrough, fontSize: 12)),
+                                  const SizedBox(height: 2),
+                                  Text('Rs ${item['discounted_price']}'),
+                                ],
+                              )
+                            : Text('Rs ${item['price']}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
