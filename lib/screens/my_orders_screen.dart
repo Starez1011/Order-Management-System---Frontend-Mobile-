@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'order_history_tab.dart';
+import 'payment_screen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({super.key});
@@ -160,7 +161,23 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                       onPressed: () => _cancelOrder(order['order_number']),
                       child: const Text('Cancel Order'),
                     )
-                  ]
+                  ],
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF059669),
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PaymentScreen(orderNumber: order['order_number']),
+                        ),
+                      );
+                    },
+                    child: const Text('Check Loyalty Points'),
+                  ),
                 ],
               ),
             ),
